@@ -2,35 +2,28 @@ import express from "express";
 import bodyParser from "body-parser";
 import pg from "pg";
 
+const db = new pg.Client({
+  user: "postgres",
+  host: "localhost",
+  database: "world",
+  password: "anjusql#2004",
+  port: 5432,
+});
+
 const app = express();
 const port = 3000;
-
-const db = new pg.Client({
-  user : "postgres",
-  host : "localhost",
-  database : "world",
-  password : "anjusql#2004",
-  port : 5432,
-})
 
 db.connect();
 
 let quiz = [];
-
-db.query("SELECT * FROM capitals", (err, res) =>
-  {
-    if(err)
-    {
-      console.error("Error executing Querry", err.stack);
-    }
-    else 
-    {
-      quiz= res.rows;
-    }
-    db.end();
-  });
-
-
+db.query("SELECT * FROM capitals", (err, res) => {
+  if (err) {
+    console.error("Error executing query", err.stack);
+  } else {
+    quiz = res.rows;
+  }
+  db.end();
+});
 
 let totalCorrect = 0;
 
@@ -68,7 +61,6 @@ app.post("/submit", (req, res) => {
 
 async function nextQuestion() {
   const randomCountry = quiz[Math.floor(Math.random() * quiz.length)];
-
   currentQuestion = randomCountry;
 }
 
